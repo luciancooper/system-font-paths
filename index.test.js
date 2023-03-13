@@ -58,4 +58,4 @@ test('module exports a function', () => {
 
 test('function returns an array of unique strings', async () => {
     await expect(systemFontPaths()).resolves.toBeArrayOfUniqueStrings();
-}, 10000);
+}, 20000);

@@ -1,14 +1,16 @@
 #define WINVER 0x0600
 #include <dwrite.h>
-
+#include <codecvt>
+#include <string>
 #include "collection.h"
 
-std::string wideCharToString(wchar_t *input) {
-    // This constructor initializes the wstring with the wchar_t * input
-    std::wstring wideInput(input);
-    // This constructor converts the wstring to string
-    std::string output(wideInput.begin(), wideInput.end());
-    return output;
+std::string wcharToString(const wchar_t *wstr) {
+    // Create a wstring from the wchar_t*
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    std::wstring wstring = wstr;
+    // Convert the wstring to a string
+    std::string string = converter.to_bytes(wstring);
+    return string;
 }
 
 // gets a localized string for a font
@@ -56,13 +58,11 @@ std::string getPostscriptName(IDWriteFont *font) {
     if (FAILED(hr)) {
         // failed to get the postscript name as a wide character string
         strings->Release();
-        delete str;
         return psName;
     }
     // convert from utf-16 to utf8
-    psName = wideCharToString(str);
+    psName = wcharToString(str);
     // cleanup
-    delete str;
     strings->Release();
     // return postscript name
     return psName;
@@ -89,7 +89,7 @@ std::string getFilePath(IDWriteFontFile *file, IDWriteLocalFontFileLoader *pLoca
     wchar_t *filePathWide = new wchar_t[nameLength + 1];
     hr = pLocalFileLoader->GetFilePathFromKey(referenceKey, referenceKeySize, filePathWide, nameLength + 1);
     if (SUCCEEDED(hr)) {
-        filePath = wideCharToString(filePathWide);
+        filePath = wcharToString(filePathWide);
     }
     return filePath;
 }
