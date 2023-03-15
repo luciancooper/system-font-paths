@@ -53,6 +53,7 @@ yarn-error.log*
 
 # Build files
 build
+lib
 
 # Coverage files
 coverage

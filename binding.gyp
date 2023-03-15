@@ -1,6 +1,6 @@
 {
     'targets': [{
-        'target_name': 'system-font-paths',
+        'target_name': '<(module_name)',
         'sources': ['src/main.cc'],
         'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
         'defines': ['NAPI_DISABLE_CPP_EXCEPTIONS'],
@@ -28,5 +28,13 @@
                 }
             }],
         ],
+    }, {
+        'target_name': 'action_after_build',
+        'type': 'none',
+        'dependencies': ['<(module_name)'],
+        'copies': [{
+            'files': ['<(PRODUCT_DIR)/<(module_name).node'],
+            'destination': '<(module_path)'
+        }],
     }],
 }

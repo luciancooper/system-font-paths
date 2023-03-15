@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.os }} (node ${{ matrix.node }})
+    name: ${{ matrix.os }} - node ${{ matrix.node }}
 
     strategy:
       fail-fast: false
@@ -44,8 +44,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    - name: install
-      run: yarn --frozen-lockfile
+    - name: install dependencies
+      run: yarn install --ignore-scripts
 
-    - name: test
+    - name: configure build
+      run: yarn node-pre-gyp configure
+
+    - name: build binaries
+      run: yarn node-pre-gyp build
+
+    - name: run tests
       run: yarn test

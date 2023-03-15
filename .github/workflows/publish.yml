@@ -4,9 +4,64 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
+  prebuild:
+    name: Prebuild Node ${{ matrix.node }} on ${{ matrix.target.os }} ${{ matrix.target.arch }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+          - { os: windows-latest, arch: x64 }
+          - { os: windows-latest, arch: x86 }
+        node: [14, 16, 18]
+
+    runs-on: ${{ matrix.target.os }}
+
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v3
+
+    - name: setup node ${{ matrix.node }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node }}
+        architecture: ${{ matrix.target.arch }}
+
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-session-name: GithubSession
+
+    - name: install dependencies
+      run: yarn install --ignore-scripts
+
+    - name: configure build
+      run: yarn node-pre-gyp configure
+
+    - name: build binaries
+      run: yarn node-pre-gyp build
+
+    - name: unpublish any conflicting binaries from aws bucket
+      run: yarn node-pre-gyp unpublish
+
+    - name: package prebuilt binaries
+      run: yarn node-pre-gyp package
+
+    - name: publish binaries to aws bucket
+      run: yarn node-pre-gyp publish
+
   publish:
     name: Publish to NPM
+    needs: [prebuild]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
