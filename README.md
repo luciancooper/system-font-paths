@@ -8,7 +8,7 @@ A C++ module for Node.js that lists all locally installed system font files.
 
 ## About
 
-This package is a slimmed down version of [`fontmanager-redux`](https://github.com/Eugeny/fontmanager-redux). 
+This package exports a single async function that returns an array containing the file paths of all locally installed fonts. It is a slimmed down version of [`fontmanager-redux`](https://github.com/Eugeny/fontmanager-redux).
 
 **Platforms**
 
@@ -29,6 +29,12 @@ Or with `yarn`:
 ```bash
 yarn add system-font-paths
 ```
+
+Prebuilt binaries are provided via [`node-pre-gyp`](https://github.com/mapbox/node-pre-gyp) for the following platforms:
+
+- macOS x64
+- Windows x64 and x86
+- Linux x64 (Ubuntu)
 
 ## API
 
