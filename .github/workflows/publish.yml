@@ -17,25 +17,26 @@ jobs:
       matrix:
         target:
           - { os: ubuntu-latest }
-          - { os: macos-latest }
+          - { os: macos-latest, arch: x64 }
+          - { os: macos-latest, arch: arm64 }
           - { os: windows-latest, arch: x64 }
           - { os: windows-latest, arch: x86 }
-        node: [14, 16, 18]
+        node: [16, 18, 20, 22]
 
     runs-on: ${{ matrix.target.os }}
 
     steps:
     - name: checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: setup node ${{ matrix.node }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node }}
         architecture: ${{ matrix.target.arch }}
 
     - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ secrets.AWS_REGION }}
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
@@ -64,10 +65,10 @@ jobs:
     needs: [prebuild]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         registry-url: https://registry.npmjs.org/
     - run: yarn --frozen-lockfile
     - run: npm publish
