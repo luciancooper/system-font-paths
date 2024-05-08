@@ -30,9 +30,9 @@ Or with `yarn`:
 yarn add system-font-paths
 ```
 
-Prebuilt binaries are provided via [`node-pre-gyp`](https://github.com/mapbox/node-pre-gyp) for the following platforms:
+Prebuilt binaries for node 16, 18, 20, and 22 are provided via [`node-pre-gyp`](https://github.com/mapbox/node-pre-gyp) for the following platforms:
 
-- macOS x64
+- macOS x64 and arm64
 - Windows x64 and x86
 - Linux x64 (Ubuntu)
 
@@ -43,7 +43,7 @@ This package exports a single asynchronous function that promises an array of fo
 ```js
 import systemFontPaths from 'system-font-paths';
 
-systemFontPaths.then((fontPaths) => { ... });
+systemFontPaths().then((fontPaths) => { ... });
 ```
 
 ## Acknowledgements
