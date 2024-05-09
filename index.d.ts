@@ -5,4 +5,6 @@
 /**
  * Fetches the paths for all locally installed fonts
  */
-export default function systemFontPaths(): Promise<string[]>;
+declare function systemFontPaths(): Promise<string[]>;
+
+export = systemFontPaths;
