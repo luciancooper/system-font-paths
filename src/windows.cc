@@ -1,16 +1,22 @@
 #define WINVER 0x0600
 #include <dwrite.h>
-#include <codecvt>
+#include <Windows.h>
 #include <string>
 #include "collection.h"
 
 std::string wcharToString(const wchar_t *wstr) {
-    // Create a wstring from the wchar_t*
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::wstring wstring = wstr;
-    // Convert the wstring to a string
-    std::string string = converter.to_bytes(wstring);
-    return string;
+    // Calculate the length of the converted string
+    int len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+    if (len == 0) {
+        // Error handling if conversion fails
+        return "";
+    }
+    // Reserve space for the string (excluding null terminator)
+    std::string str(len - 1, 0);
+    // Perform the conversion
+    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, &str[0], len, NULL, NULL);
+    // Return converted string
+    return str;
 }
 
 // gets a localized string for a font
@@ -58,11 +64,13 @@ std::string getPostscriptName(IDWriteFont *font) {
     if (FAILED(hr)) {
         // failed to get the postscript name as a wide character string
         strings->Release();
+        delete str;
         return psName;
     }
     // convert from utf-16 to utf8
     psName = wcharToString(str);
     // cleanup
+    delete str;
     strings->Release();
     // return postscript name
     return psName;
