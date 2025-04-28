@@ -42,6 +42,10 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
         role-session-name: GithubSession
 
+    - name: install linux system dependencies
+      if: ${{ matrix.target.os == 'ubuntu-latest' }}
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libfontconfig1-dev
+
     - name: install dependencies
       run: yarn install --ignore-engines --ignore-scripts
 
